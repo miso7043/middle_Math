@@ -1,0 +1,15 @@
+[Unit]
+Description=Middle school math web app
+
+[Container]
+Image=localhost/math-web:release
+Pull=never
+ContainerName=math-web
+PublishPort=127.0.0.1:8040:8080
+
+[Service]
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

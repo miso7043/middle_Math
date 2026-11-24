@@ -1,0 +1,12 @@
+[Unit]
+Description=Middle school math web app (Podman)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/podman run --rm --name math-web --pull=never -p 127.0.0.1:8040:8080 localhost/math-web:release
+ExecStop=/usr/bin/podman stop -t 10 math-web
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
