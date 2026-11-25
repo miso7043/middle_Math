@@ -24,10 +24,10 @@ export function LessonMotivation({ title, content }: { title: string; content: M
   }, [open])
 
   const sections = [
-    { title: '왜 이런 개념일까요?', paragraphs: content.explanation },
-    { title: '왜 배우고 왜 중요한가요?', items: content.reasons },
-    { title: '어디에 쓰일까요?', items: content.applications },
-    { title: '나중에 무엇으로 이어질까요?', items: content.next },
+    { title: '생활 속에서 생각해 볼까요?', paragraphs: content.explanation },
+    { title: '알면 어떤 점이 편리할까요?', items: content.reasons },
+    { title: '이럴 때 쓸 수 있어요', items: content.applications },
+    { title: '직접 써 보고 확인해 보세요', items: content.dailyTips },
   ]
 
   return <>
