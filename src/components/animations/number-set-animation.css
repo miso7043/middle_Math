@@ -1,0 +1,22 @@
+.number-set-animation { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid #c9dcd1; }
+.number-set-animation h4 { margin: 0 0 1rem; font-size: 1rem; }
+.number-set-row { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem 1rem; margin: .8rem 0; }
+.number-set-values { display: flex; flex-wrap: wrap; gap: .3rem; }
+.number-set-value { position: relative; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; font-size: 1.1rem; font-weight: 600; }
+.number-set-circle { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; stroke: #167751; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transform: rotate(-90deg); }
+.number-set-row, .number-set-common, .number-set-order-step, .number-set-conclusion { opacity: 0; }
+.number-set-animation .number-set-order { font-size: clamp(1.25rem, 5vw, 1.8rem); letter-spacing: .08em; text-align: center; margin: 1rem 0; }
+.number-set-order strong, .number-set-conclusion strong { color: #12633f; }
+.number-set-conclusion { padding: .8rem; border-radius: .5rem; background: #e0f0e6; text-align: center; line-height: 1.7; }
+.is-visible .number-set-row, .is-visible .number-set-common, .is-visible .number-set-order-step, .is-visible .number-set-conclusion { animation: number-set-appear .4s ease both; }
+.is-visible .number-set-row-0 { animation-delay: .1s; }
+.is-visible .number-set-row-1 { animation-delay: 1s; }
+.is-visible .number-set-circle { animation: number-set-draw .18s ease both; }
+.is-visible .number-set-common { animation-delay: 3.1s; }
+.is-visible .number-set-conclusion { animation-delay: 4.6s; }
+@keyframes number-set-appear { from { opacity: 0; transform: translateY(.4rem); } to { opacity: 1; transform: translateY(0); } }
+@keyframes number-set-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .number-set-animation .number-set-row, .number-set-animation .number-set-common, .number-set-animation .number-set-order-step, .number-set-animation .number-set-conclusion { opacity: 1; animation: none; }
+  .number-set-animation .number-set-circle { stroke-dashoffset: 0; animation: none; }
+}
