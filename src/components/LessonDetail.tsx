@@ -5,18 +5,22 @@ import type { Lesson } from '../content/lessons'
 import { scenes } from '../geometry/scenes'
 import { GcdAnimation } from './GcdAnimation'
 import { LcmAnimation } from './LcmAnimation'
+import { LessonMotivation } from './LessonMotivation'
+import { lessonMotivations } from '../content/lessonMotivations'
 
 const GeometryLab = lazy(() => import('../geometry/GeometryLab').then(module => ({ default: module.GeometryLab })))
 
 export function LessonDetail({ lesson }: { lesson: Lesson }) {
   const scene = scenes[lesson.id]
   const figure = getFigure(lesson.id)
+  const motivation = lessonMotivations[lesson.id]
   return <article id={lesson.id} className="lesson-detail" aria-labelledby={`lesson-title-${lesson.id}`}>
     <div className="lesson-meta">중학교 {lesson.grade}학년 <span aria-hidden="true">/</span> {lesson.unit}</div>
     <div className="lesson-heading">
       <span className="type-chip">{lesson.id.startsWith('D') ? '정의' : '정리'} {lesson.id}</span>
       <h2 id={`lesson-title-${lesson.id}`}>{lesson.title}</h2>
     </div>
+    {motivation && <LessonMotivation title={lesson.title} content={motivation} />}
     {lesson.body && <p className="lesson-copy">{lesson.body}</p>}
     {lesson.lines.length > 0 && <ul className="formula-lines">
       {lesson.lines.map(line => <li key={line}>{line}</li>)}
