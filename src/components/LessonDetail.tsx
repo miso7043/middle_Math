@@ -3,6 +3,7 @@ import { getFigure } from '../content/figures'
 import { LessonFormula, TrigTable } from '../content/formulas'
 import type { Lesson } from '../content/lessons'
 import { scenes } from '../geometry/scenes'
+import { GcdAnimation } from './GcdAnimation'
 
 const GeometryLab = lazy(() => import('../geometry/GeometryLab').then(module => ({ default: module.GeometryLab })))
 
@@ -26,6 +27,7 @@ export function LessonDetail({ lesson }: { lesson: Lesson }) {
       <h3 id={`example-${lesson.id}`}>예제와 풀이</h3>
       <p className="example-question">{lesson.examples[0]}</p>
       <ol>{lesson.examples.slice(1).map(step => <li key={step}>{step}</li>)}</ol>
+      {lesson.id === 'D2' && <GcdAnimation />}
     </section>}
     {scene && <Suspense fallback={<p>도형을 불러오는 중…</p>}><GeometryLab key={lesson.id} scene={scene} /></Suspense>}
     {figure && <figure className="source-figure">

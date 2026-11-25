@@ -99,3 +99,27 @@ button:hover { background: #edf4e8; }
 .example-question { margin: 0 0 .75rem; font-weight: 600; }
 .lesson-example ol { margin: 0; padding-left: 1.4rem; line-height: 1.8; }
 .lesson-example li + li { margin-top: .5rem; }
+
+.gcd-animation { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid #c9dcd1; }
+.gcd-animation h4 { margin: 0 0 1rem; font-size: 1rem; }
+.gcd-row { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem 1rem; margin: .8rem 0; }
+.gcd-divisors { display: flex; flex-wrap: wrap; gap: .3rem; }
+.gcd-divisor { position: relative; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; font-size: 1.1rem; font-weight: 600; }
+.gcd-circle { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; stroke: #167751; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transform: rotate(-90deg); }
+.gcd-row, .gcd-common, .gcd-order, .gcd-conclusion { opacity: 0; }
+.gcd-animation .gcd-order { font-size: clamp(1.25rem, 5vw, 1.8rem); letter-spacing: .08em; text-align: center; margin: 1rem 0; }
+.gcd-order strong, .gcd-conclusion strong { color: #12633f; }
+.gcd-conclusion { padding: .8rem; border-radius: .5rem; background: #e0f0e6; text-align: center; line-height: 1.7; }
+.is-visible .gcd-row, .is-visible .gcd-common, .is-visible .gcd-order, .is-visible .gcd-conclusion { animation: gcd-appear .4s ease both; }
+.is-visible .gcd-row-0 { animation-delay: .1s; }
+.is-visible .gcd-row-1 { animation-delay: 1s; }
+.is-visible .gcd-circle { animation: gcd-draw .7s ease 2s both; }
+.is-visible .gcd-common { animation-delay: 2.7s; }
+.is-visible .gcd-order { animation-delay: 3.3s; }
+.is-visible .gcd-conclusion { animation-delay: 4s; }
+@keyframes gcd-appear { from { opacity: 0; transform: translateY(.4rem); } to { opacity: 1; transform: translateY(0); } }
+@keyframes gcd-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .gcd-animation .gcd-row, .gcd-animation .gcd-common, .gcd-animation .gcd-order, .gcd-animation .gcd-conclusion { opacity: 1; animation: none; }
+  .gcd-animation .gcd-circle { stroke-dashoffset: 0; animation: none; }
+}
