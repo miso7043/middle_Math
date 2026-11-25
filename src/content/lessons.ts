@@ -1,3 +1,4 @@
+import examples from './examples.json'
 import first from './grade-1.json'
 import second from './grade-2.json'
 import third from './grade-3.json'
@@ -10,16 +11,21 @@ export interface Lesson {
   title: string
   body: string
   lines: string[]
+  examples: string[]
   note?: string
 }
 
-export const lessons: Lesson[] = [...first, ...second, ...third]
+const lessonExamples: Record<string, string[]> = examples
+
+export const lessons: Lesson[] = [...first, ...second, ...third].map(lesson => ({
+  ...lesson, examples: lessonExamples[lesson.id] ?? [],
+}))
 
 export function findLessons(grade: number, query: string) {
   const words = query.trim().toLocaleLowerCase('ko').split(/\s+/).filter(Boolean)
   return lessons.filter(lesson => {
     if (grade && lesson.grade !== grade) return false
-    const source = [lesson.id, lesson.unit, lesson.title, lesson.body, ...lesson.lines, lesson.note]
+    const source = [lesson.id, lesson.unit, lesson.title, lesson.body, ...lesson.lines, ...lesson.examples, lesson.note]
       .join(' ').toLocaleLowerCase('ko')
     return words.every(word => source.includes(word))
   })

@@ -1,61 +1,62 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Parameter, Values } from './types'
 
-const duration = 3600
-const read = (parameters: readonly Parameter[], key: 'initial' | 'target'): Values =>
-  Object.fromEntries(parameters.map(parameter => [parameter.key, parameter[key]]))
+const readInitial = (parameters: readonly Parameter[]): Values =>
+  Object.fromEntries(parameters.map(parameter => [parameter.key, parameter.initial]))
 
-export function usePlayback(parameters: readonly Parameter[]) {
-  const [values, setValues] = useState(() => read(parameters, 'initial'))
+// Visibility and animation timing live here, independently of the lesson UI.
+export function usePlayback(parameters: readonly Parameter[], options?: { durationMs: number }) {
+  const viewport = useRef<HTMLDivElement>(null)
+  const [values, setValues] = useState(() => readInitial(parameters))
   const [playing, setPlaying] = useState(false)
-  const progress = useRef(0)
-  const start = useRef(values)
-  const end = useRef(read(parameters, 'target'))
+  const stop = useRef<() => void>(() => {})
+  const duration = Math.min(5000, Math.max(1, options?.durationMs ?? 3600))
 
   useEffect(() => {
-    if (!playing) return
-    let frame: number
-    let last: number | undefined
-    function update(time: number) {
-      progress.current = Math.min(1, progress.current + (time - (last ?? time)) / duration)
-      last = time
-      const eased = (1 - Math.cos(Math.PI * progress.current)) / 2
-      setValues(Object.fromEntries(parameters.map(({ key }) =>
-        [key, start.current[key] + (end.current[key] - start.current[key]) * eased])))
-      if (progress.current < 1) frame = requestAnimationFrame(update)
-      else setPlaying(false)
+    const element = viewport.current
+    if (!element) return
+    let frame = 0
+    let visible = false
+    const cancel = () => {
+      cancelAnimationFrame(frame)
+      setPlaying(false)
     }
-    frame = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(frame)
-  }, [parameters, playing])
-
-  function play() {
-    if (!progress.current || progress.current >= 1) {
-      start.current = values
-      const target = read(parameters, 'target')
-      end.current = parameters.every(({ key }) => values[key] === target[key])
-        ? read(parameters, 'initial') : target
-      progress.current = 0
+    stop.current = cancel
+    const observer = new IntersectionObserver(([entry]) => {
+      const nextVisible = entry.isIntersecting && entry.intersectionRatio > 0
+      if (visible === nextVisible) return
+      visible = nextVisible
+      cancel()
+      setValues(readInitial(parameters))
+      if (!visible) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setValues(Object.fromEntries(parameters.map(({ key, target }) => [key, target])))
+        return
+      }
+      setPlaying(true)
+      const started = performance.now()
+      function update(time: number) {
+        const progress = Math.min(1, (time - started) / duration)
+        const eased = (1 - Math.cos(Math.PI * progress)) / 2
+        setValues(Object.fromEntries(parameters.map(({ key, initial, target }) =>
+          [key, initial + (target - initial) * eased])))
+        if (progress < 1) frame = requestAnimationFrame(update)
+        else setPlaying(false)
+      }
+      frame = requestAnimationFrame(update)
+    }, { threshold: 0 })
+    observer.observe(element)
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(frame)
+      stop.current = () => {}
     }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setValues(end.current)
-      progress.current = 1
-      return
-    }
-    setPlaying(true)
-  }
+  }, [parameters, duration])
 
   function change(key: string, value: number) {
-    setPlaying(false)
-    progress.current = 0
+    stop.current()
     setValues(current => ({ ...current, [key]: value }))
   }
 
-  function reset() {
-    setPlaying(false)
-    progress.current = 0
-    setValues(read(parameters, 'initial'))
-  }
-
-  return { values, playing, play, pause: () => setPlaying(false), change, reset }
+  return { viewport, values, playing, change }
 }

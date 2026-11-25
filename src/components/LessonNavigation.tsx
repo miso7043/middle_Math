@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import type { Lesson } from '../content/lessons'
 
 export function LessonNavigation({ grade, query, results, activeId, onGrade, onSearch }: {
@@ -10,6 +10,16 @@ export function LessonNavigation({ grade, query, results, activeId, onGrade, onS
   onSearch: (query: string) => void
 }) {
   const search = useId()
+  const navigation = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const nav = navigation.current
+    const active = nav?.querySelector<HTMLElement>('[aria-current]')
+    if (!nav || !active) return
+    const bounds = nav.getBoundingClientRect()
+    const item = active.getBoundingClientRect()
+    if (item.top < bounds.top) nav.scrollTop -= bounds.top - item.top
+    else if (item.bottom > bounds.bottom) nav.scrollTop += item.bottom - bounds.bottom
+  }, [activeId])
   const grouped = new Map<string, Lesson[]>()
   for (const lesson of results) {
     const heading = grade ? lesson.unit : `중${lesson.grade} · ${lesson.unit}`
@@ -29,12 +39,12 @@ export function LessonNavigation({ grade, query, results, activeId, onGrade, onS
     <input id={search} className="search" type="search" placeholder="예: 피타고라스, T30"
       value={query} onChange={event => onSearch(event.target.value)} />
     <p className="result-count" aria-live="polite">{results.length}개 항목</p>
-    <nav className="lesson-navigation" aria-label="학습 항목" tabIndex={0}>
+    <nav ref={navigation} className="lesson-navigation" aria-label="학습 항목" tabIndex={0}>
       {[...grouped].map(([heading, group]) => <section key={heading}>
         <h2>{heading}</h2>
         <ul>
           {group.map(lesson => <li key={lesson.id}>
-            <a href={`#${lesson.id}`} aria-current={lesson.id === activeId ? 'page' : undefined}>
+            <a href={`#${lesson.id}`} aria-current={lesson.id === activeId ? 'location' : undefined}>
               <span className="lesson-code">{lesson.id}</span> {lesson.title}
             </a>
           </li>)}

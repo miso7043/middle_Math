@@ -1,3 +1,3 @@
 import { defineConfig } from 'vite'
 
-export default defineConfig({ base: '/math/' })
+export default defineConfig({ base: '/mid-math/' })

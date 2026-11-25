@@ -18,6 +18,7 @@ export interface FigureLabel extends Point {
 
 export interface Scene {
   title: string
+  playback?: { durationMs: number }
   instructions: string
   parameters: readonly Parameter[]
   draw: (canvas: CanvasRenderingContext2D, values: Values) => FigureLabel[]

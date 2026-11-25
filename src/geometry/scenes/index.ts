@@ -1,3 +1,4 @@
+import { factorization } from './factorization'
 import { vertical } from './vertical'
 import { sector } from './sector'
 import { pythagoras } from './pythagoras'
@@ -5,6 +6,8 @@ import { inscribed } from './inscribed'
 import type { Scene } from '../types'
 
 export const scenes: Record<string, Scene> = {
+  D1: factorization,
+  T1: factorization,
   T6: vertical,
   D10: sector,
   T11: sector,
